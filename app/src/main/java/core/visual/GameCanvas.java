@@ -21,9 +21,20 @@ public class GameCanvas extends Canvas {
      */
     public final int canvasGridStart = 30;
 
+    public GameLoopTimer gameLoopTimer;
+
 
     public GameCanvas() {
         super(CANVAS_PIXEL_SIZE, CANVAS_PIXEL_SIZE);
+
+        gameLoopTimer = new GameLoopTimer() {
+            @Override
+            public void tick(float secondsSinceLastFrame) {
+                clearCanvas();
+                drawVisibleSquares();
+            }
+        };
+        gameLoopTimer.start();
     }
 
     /**
@@ -34,20 +45,30 @@ public class GameCanvas extends Canvas {
         return CANVAS_PIXEL_SIZE / GRID_PIXEL_SIZE;
     }
 
-    public void drawVisibleSquares(GraphicsContext graphicsContext) {
+    public void drawVisibleSquares() {
+        GraphicsContext graphicsContext = this.getGraphicsContext2D();
+        graphicsContext.save();
         graphicsContext.setFill(Color.GREEN);
         for (int rowIndex = canvasGridStart; rowIndex < (canvasGridStart + this.getCanvasIndexCoverage()); rowIndex++) {
             for (int colIndex = canvasGridStart; colIndex < (canvasGridStart + this.getCanvasIndexCoverage()); colIndex++) {
                 if (EntityGrid.getEntityGrid().isSquareActive(rowIndex,colIndex)) {
-                    drawSquare(rowIndex, colIndex, graphicsContext);
+                    drawSquare(rowIndex, colIndex);
                 }
             }
         }
+        graphicsContext.restore();
     }
 
-    public void drawSquare(int rowIndex, int colIndex,GraphicsContext graphicsContext) {
+    public void drawSquare(int rowIndex, int colIndex) {
+        GraphicsContext graphicsContext = this.getGraphicsContext2D();
         int xStart = (rowIndex - this.canvasGridStart) * this.GRID_PIXEL_SIZE;
         int yStart = (colIndex - this.canvasGridStart) * this.GRID_PIXEL_SIZE;
         graphicsContext.fillRoundRect(xStart,yStart,this.GRID_PIXEL_SIZE, this.GRID_PIXEL_SIZE,10, 10);
+    }
+
+    public void clearCanvas() {
+        GraphicsContext graphicsContext = this.getGraphicsContext2D();
+        graphicsContext.setFill(Color.GRAY);
+        graphicsContext.clearRect(0,0,CANVAS_PIXEL_SIZE, CANVAS_PIXEL_SIZE);
     }
 }

@@ -9,14 +9,21 @@ public class EntityGrid {
 
     /** @param SIMULATED_GRID_SIZE Increase this number to make the system keep track of items further outside the screen */
     private final int SIMULATED_GRID_SIZE = 100;
+    /** @param gameRunning indicated if game ticks should be applied at the rate of gameSpeed. */
+    private volatile boolean gameRunning = true;
+    /** @param gameSpeed designated in ms between gameTicks */
+    private volatile int gameSpeed = 1000;
+    private final GameOfLifeRules ruleSet;
+
 
     private static EntityGrid entityGridSingletonInstance;
 
-    public boolean[][] entityGrid;
+    private boolean[][] entityGrid;
 
     private EntityGrid() {
         // Start all squares empty.
         entityGrid = new boolean[SIMULATED_GRID_SIZE][SIMULATED_GRID_SIZE];
+        ruleSet = new GameOfLifeRules();
     }
 
     public static EntityGrid getEntityGrid() {
@@ -47,6 +54,48 @@ public class EntityGrid {
                 entityGrid[rowIndex][colIndex] = entity[rowIndex-startYIndex][colIndex-startXIndex];
             }
         }
+    }
+
+    public int getGridSize() {
+        return SIMULATED_GRID_SIZE;
+    }
+
+    /**
+     * Creates a thread to run the simulation behind the scenes. This will apply the ruleset in the gamerules once
+     * every `gameSpeed` milliseconds.
+     */
+    public void startSimulation() {
+        Thread gameSimulationRunner = new Thread(() -> {
+            try {
+                Thread.sleep(1000);
+                while (gameRunning) {
+                    Thread.sleep(gameSpeed);
+                    EntityGrid.getEntityGrid().executeSimulationTick();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        gameSimulationRunner.start();
+    }
+
+    /**
+     * Stops the game simulation.
+     */
+    public void stopSimulation() {
+        gameRunning = false;
+    }
+
+    /**
+     * Sets the simulation speed.
+     * @param speed time in ms between ticks.
+     */
+    public void setSimulationSpeed(int speed) {
+        EntityGrid.getEntityGrid().gameSpeed = speed;
+    }
+
+    private void executeSimulationTick() {
+        this.entityGrid = ruleSet.applyRulesToGrid(this.entityGrid);
     }
 
 
