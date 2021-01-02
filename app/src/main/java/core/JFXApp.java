@@ -13,7 +13,7 @@ import javafx.stage.WindowEvent;
 public class JFXApp extends Application {
 
     public static void main(String[] args) {
-        EntityGrid.getEntityGrid().addEntityToGrid(30, 30, SpaceShip.GLIDER);
+        EntityGrid.getEntityGrid().addEntityToGrid(32, 32, SpaceShip.GLIDER);
 
         Thread frontendApp = new Thread(()-> {
             JFXApp.launch(args);

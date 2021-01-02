@@ -1,5 +1,7 @@
 package core.entities;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * This class will represent the abstract 2d plane on which the game of life takes place. For the first implementation
  * this will be limited to a static grid size outside of which the entities will no longer be simulated. Increasing the
@@ -68,9 +70,11 @@ public class EntityGrid {
         Thread gameSimulationRunner = new Thread(() -> {
             try {
                 Thread.sleep(1000);
+                AtomicInteger iteratation = new AtomicInteger();
+                iteratation.set(0);
                 while (gameRunning) {
                     Thread.sleep(gameSpeed);
-                    EntityGrid.getEntityGrid().executeSimulationTick();
+                    EntityGrid.getEntityGrid().executeSimulationTick(iteratation);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -94,8 +98,8 @@ public class EntityGrid {
         EntityGrid.getEntityGrid().gameSpeed = speed;
     }
 
-    private void executeSimulationTick() {
-        this.entityGrid = ruleSet.applyRulesToGrid(this.entityGrid);
+    private void executeSimulationTick(AtomicInteger iteration) {
+        this.entityGrid = ruleSet.applyRulesToGrid(this.entityGrid, iteration);
     }
 
 

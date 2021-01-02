@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class EntityUtility {
@@ -101,6 +102,16 @@ public class EntityUtility {
             }
         }
         return outputEntity;
+    }
+
+    /**
+     * Deep clones an array.
+     * From <a href=https://stackoverflow.com/questions/1564832/how-do-i-do-a-deep-copy-of-a-2d-array-in-java>Stackoverflow question ref</a>
+     * @param matrix Array to clone.
+     * @return Cloned array.
+     */
+    public static boolean[][] deepCopy(boolean[][] matrix) {
+        return Arrays.stream(matrix).map(boolean[]::clone).toArray($ -> matrix.clone());
     }
 
 }
