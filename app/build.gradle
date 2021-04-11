@@ -13,8 +13,8 @@ plugins {
 }
 
 repositories {
-    // Use JCenter for resolving dependencies.
-    jcenter()
+    // Use mavenCentral (because of jCenter decommissioning) for resolving dependencies.
+    mavenCentral()
 }
 
 javafx {
